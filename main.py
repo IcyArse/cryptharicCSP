@@ -1,11 +1,11 @@
 import re
 
 class CSP:
-    def __init__(self, variables, domains, constraints, equation):
+    def __init__(self, variables, domains, constraints, puzzle):
         self.variables = variables  
         self.domains = domains  
         self.constraints = constraints  
-        self.equation = equation 
+        self.puzzle = puzzle 
         self.solution = None
 
     def solve(self):
@@ -38,13 +38,13 @@ class CSP:
         return all(assignment.get(neighbor) != value for neighbor in self.constraints[var])
 
     def is_valid_solution(self, assignment):
-        equation = self.equation
+        puzzle = self.puzzle
 
         for var in assignment:
-            equation = equation.replace(var, str(assignment[var]))
+            puzzle = puzzle.replace(var, str(assignment[var]))
 
-        left_side, right_side = equation.split('=')
-        
+        left_side, right_side = puzzle.split('=')
+
         try:
             return eval(left_side) == eval(right_side)
         except:
@@ -52,13 +52,13 @@ class CSP:
 
 
 # the puzzle:
-equation = "SEND + MORE = MONEY"
-variables = list(set(re.findall(r'[A-Z]', equation)))  # Extract unique letters from the equation
+puzzle = "SEND + MORE = MONEY"
+variables = list(set(re.findall(r'[A-Z]', puzzle)))  # Extract unique letters from the puzzle
 
 domains = {var: list(range(10)) for var in variables}
 
 # Prevents first letter from having 0 assigned to them
-l = equation.split(' ')
+l = puzzle.split(' ')
 for i in l:
         if i.isalpha():
                 if 0 in domains[i[0]]:
@@ -66,7 +66,7 @@ for i in l:
 
 # each variable taking a unique number
 constraints = {var: [v for v in variables if v != var] for var in variables}
-cryptarithmetic_csp = CSP(variables, domains, constraints, equation)
+cryptarithmetic_csp = CSP(variables, domains, constraints, puzzle)
 
 solution = cryptarithmetic_csp.solve()
 
